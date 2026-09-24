@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IKSA Player - Upload Music</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; background: #bfbfd7; -webkit-font-smoothing: antialiased; }
+    body.dark-mode { background: #090b18; color: #e5e7eb; }
+    body.dark-mode .glass { background: linear-gradient(135deg, rgba(30,33,58,.82), rgba(15,18,38,.68)); border-color: rgba(148,163,184,.22); box-shadow: 0 20px 45px rgba(0,0,0,.38), inset 0 1px 1px rgba(255,255,255,.08); }
+    body.dark-mode input { color: #f8fafc; background: rgba(30,41,72,.58); border-color: rgba(148,163,184,.24); }
+    .theme-toggle { position: fixed; top: 1.25rem; right: 1.25rem; z-index: 20; width: 2.5rem; height: 2.5rem; border-radius: .85rem; background: rgba(255,255,255,.42); border: 1px solid rgba(255,255,255,.6); transition: transform 350ms cubic-bezier(.22,1,.36,1), background 400ms ease; }
+    .theme-toggle:hover { transform: translateY(-1px) rotate(8deg); }
+    body.dark-mode .theme-toggle { color: #f8fafc; background: rgba(51,65,85,.7); border-color: rgba(148,163,184,.3); }
+    .glass { background: linear-gradient(135deg, rgba(255,255,255,.48), rgba(255,255,255,.18)); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.55); box-shadow: 0 20px 45px rgba(0,0,0,.14), inset 0 1px 1px rgba(255,255,255,.65); animation: surfaceIn 700ms cubic-bezier(.22,1,.36,1) both; }
+    .blob { position: fixed; border-radius: 999px; filter: blur(90px); pointer-events: none; animation: drift 18s ease-in-out infinite alternate; }
+    .blob:last-of-type { animation-delay: -8s; }
+    input, button { transition: transform 350ms cubic-bezier(.22,1,.36,1), box-shadow 350ms ease, background-color 350ms ease, border-color 350ms ease; }
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(1px) scale(.98); }
+    input:focus { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(124,58,237,.12); }
+    @keyframes drift { from { transform: translate3d(-1%, -1%, 0); } to { transform: translate3d(2%, 2%, 0) scale(1.04); } }
+    @keyframes surfaceIn { from { opacity: 0; transform: translateY(16px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; } }
+  </style>
+</head>
+<body class="min-h-screen px-5 py-8 text-slate-800">
+  <button id="themeToggle" class="theme-toggle" type="button" aria-label="Enable dark mode" title="Enable dark mode">☾</button>
+  <div class="blob w-96 h-96 bg-purple-400/35 -top-20 -left-20"></div>
+  <div class="blob w-96 h-96 bg-pink-300/35 -bottom-24 -right-16"></div>
+  <main class="relative z-10 mx-auto w-full max-w-3xl">
+    <header class="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <img src="./iksa-logo.png" class="w-14 h-14 rounded-2xl object-cover shadow-md border border-white/70" alt="IKSA Player logo">
+        <div>
+        <button id="backButton" class="text-xs font-bold text-slate-600 hover:text-slate-900">← Back to music</button>
+        <h1 class="mt-3 text-3xl font-black">Upload music</h1>
+        <p class="mt-1 text-sm text-slate-600">Share a track with your IKSA Player catalog.</p>
+        </div>
+      </div>
+      <button id="signOutButton" class="rounded-xl bg-white/45 px-3 py-2 text-xs font-bold border border-white/60">Sign out</button>
+    </header>
+
+    <section class="glass rounded-[2rem] p-6 sm:p-8">
+      <form id="uploadForm" class="grid gap-5 md:grid-cols-2" enctype="multipart/form-data">
+        <div class="md:col-span-2">
+          <label for="audioFile" class="mb-2 block text-xs font-bold">Audio file</label>
+          <input id="audioFile" name="audio" type="file" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,.mp3,.wav,.ogg,.m4a" required class="block w-full rounded-2xl border border-white/70 bg-white/40 px-4 py-3 text-sm">
+          <p class="mt-1 text-[11px] text-slate-600">MP3, WAV, OGG, or M4A up to 100 MB.</p>
+        </div>
+        <div class="md:col-span-2">
+          <label for="coverFile" class="mb-2 block text-xs font-bold">Cover art <span class="font-normal">(optional)</span></label>
+          <input id="coverFile" name="cover" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" class="block w-full rounded-2xl border border-white/70 bg-white/40 px-4 py-3 text-sm">
+        </div>
+        <div>
+          <label for="title" class="mb-2 block text-xs font-bold">Track title</label>
+          <input id="title" name="title" required maxlength="255" class="w-full rounded-2xl border border-white/70 bg-white/40 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-purple-400">
+        </div>
+        <div>
+          <label for="artist" class="mb-2 block text-xs font-bold">Artist</label>
+          <input id="artist" name="artist" required maxlength="255" class="w-full rounded-2xl border border-white/70 bg-white/40 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-purple-400">
+        </div>
+        <div>
+          <label for="genre" class="mb-2 block text-xs font-bold">Genre</label>
+          <input id="genre" name="genre" required maxlength="100" placeholder="Lo-Fi, Jazz, Pop..." class="w-full rounded-2xl border border-white/70 bg-white/40 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-purple-400">
+        </div>
+        <div class="md:col-span-2">
+          <label class="flex items-center gap-2 text-sm font-semibold">
+            <input id="isPublic" name="isPublic" type="checkbox" checked class="h-4 w-4 accent-slate-800">
+            Make this track available in search and recommendations
+          </label>
+        </div>
+        <div class="md:col-span-2">
+          <p id="message" class="hidden mb-3 rounded-xl px-3 py-2 text-xs font-semibold"></p>
+          <button id="submitButton" type="submit" class="w-full rounded-2xl bg-slate-900 py-3 text-sm font-bold text-white hover:bg-slate-800 disabled:opacity-60">Upload track</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="glass mt-6 rounded-[2rem] p-6">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg font-black">Your uploads</h2>
+          <p id="selectionSummary" class="mt-1 text-xs text-slate-600">0 selected</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button id="selectAllButton" type="button" class="rounded-xl bg-white/50 px-3 py-2 text-xs font-bold border border-white/60 hover:bg-white/75">Select all</button>
+          <button id="downloadSelectedButton" type="button" disabled class="rounded-xl bg-slate-800 px-3 py-2 text-xs font-bold text-white hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-40">Download selected</button>
+          <button id="downloadAllButton" type="button" disabled class="rounded-xl bg-pink-600 px-3 py-2 text-xs font-bold text-white hover:bg-pink-700 disabled:cursor-not-allowed disabled:opacity-40">Download all</button>
+          <button id="deleteSelectedButton" type="button" disabled class="rounded-xl bg-red-600 px-3 py-2 text-xs font-bold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40">Delete selected</button>
+          <button id="deleteAllButton" type="button" disabled class="rounded-xl bg-red-800 px-3 py-2 text-xs font-bold text-white hover:bg-red-900 disabled:cursor-not-allowed disabled:opacity-40">Delete all</button>
+          <button id="undoButton" type="button" disabled class="rounded-xl bg-amber-500 px-3 py-2 text-xs font-bold text-white hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-40">Undo</button>
+          <button id="redoButton" type="button" disabled class="rounded-xl bg-slate-600 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40">Redo</button>
+        </div>
+      </div>
+      <div id="uploadsList" class="mt-4 grid gap-3"></div>
+    </section>
+  </main>
+  <script>
+    const API_BASE_URL = window.location.origin === 'null' ? 'http://localhost:3000' : window.location.origin;
+    const tokenKey = 'sound-lounge-auth-token';
+    const form = document.getElementById('uploadForm');
+    const message = document.getElementById('message');
+    const submitButton = document.getElementById('submitButton');
+    const uploadsList = document.getElementById('uploadsList');
+    const selectionSummary = document.getElementById('selectionSummary');
+    const selectAllButton = document.getElementById('selectAllButton');
+    const downloadSelectedButton = document.getElementById('downloadSelectedButton');
+    const downloadAllButton = document.getElementById('downloadAllButton');
+    const deleteSelectedButton = document.getElementById('deleteSelectedButton');
+    const deleteAllButton = document.getElementById('deleteAllButton');
+    const undoButton = document.getElementById('undoButton');
+    const redoButton = document.getElementById('redoButton');
+    let uploads = [];
+    let undoStack = [];
+    let redoStack = [];
+    const themeKey = 'iksa-player-theme';
+    const themeToggle = document.getElementById('themeToggle');
+    function applyTheme(theme) {
+      const dark = theme === 'dark';
+      document.body.classList.toggle('dark-mode', dark);
+      themeToggle.textContent = dark ? '☀' : '☾';
+      themeToggle.setAttribute('aria-label', dark ? 'Enable light mode' : 'Enable dark mode');
+    }
+    applyTheme(localStorage.getItem(themeKey) || 'light');
+    themeToggle.addEventListener('click', () => {
+      const next = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+      localStorage.setItem(themeKey, next);
+      applyTheme(next);
+    });
+
+    function authHeaders() {
+      const token = localStorage.getItem(tokenKey);
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    function showMessage(text, error = true) {
+      message.textContent = text;
+      message.className = `mb-3 rounded-xl px-3 py-2 text-xs font-semibold ${error ? 'bg-red-100/70 text-red-700' : 'bg-emerald-100/70 text-emerald-700'}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      }[character]));
+    }
+
+    async function loadUploads() {
+      const response = await fetch(`${API_BASE_URL}/api/uploads/mine`, { headers: authHeaders() });
+      if (response.status === 401) {
+        window.location.replace(`${API_BASE_URL}/auth.html?returnTo=/upload.html`);
+        return;
+      }
+      const data = await response.json();
+      uploads = data.tracks || [];
+      uploadsList.innerHTML = uploads.length
+        ? uploads.map(track => `<div class="flex items-center gap-3 rounded-2xl bg-white/30 p-3 hover:bg-white/45"><input type="checkbox" value="${escapeHtml(track.id)}" class="upload-checkbox h-4 w-4 accent-slate-800"><div class="min-w-0 flex-1"><div class="truncate text-sm font-bold">${escapeHtml(track.title)}</div><div class="truncate text-xs text-slate-600">${escapeHtml(track.artist)} · ${escapeHtml(track.genre)}</div></div><span class="text-[10px] font-bold uppercase">${track.is_public ? 'Published' : 'Private'}</span><button type="button" data-delete-track="${escapeHtml(track.id)}" class="shrink-0 rounded-xl bg-red-100/70 px-2.5 py-1.5 text-[10px] font-bold text-red-700 hover:bg-red-200/80">Delete</button></div>`).join('')
+        : '<p class="text-sm text-slate-600">No uploads yet.</p>';
+      updateSelection();
+    }
+
+    function selectedIds() {
+      return [...document.querySelectorAll('.upload-checkbox:checked')].map(input => input.value);
+    }
+
+    function updateSelection() {
+      const selected = selectedIds();
+      selectionSummary.textContent = `${selected.length} selected`;
+      downloadSelectedButton.disabled = selected.length === 0;
+      downloadAllButton.disabled = uploads.length === 0;
+      deleteSelectedButton.disabled = selected.length === 0;
+      deleteAllButton.disabled = uploads.length === 0;
+      selectAllButton.textContent = selected.length === uploads.length && uploads.length ? 'Clear all' : 'Select all';
+      updateUndoRedo();
+    }
+
+    async function downloadTrack(trackId) {
+      const response = await fetch(`${API_BASE_URL}/api/uploads/${encodeURIComponent(trackId)}/download`, { headers: authHeaders() });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Download failed.');
+      }
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = uploads.find(track => String(track.id) === String(trackId))?.title || 'sound-lounge-track';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    }
+
+    async function downloadTracks(trackIds) {
+      try {
+        for (const trackId of trackIds) {
+          await downloadTrack(trackId);
+        }
+        showMessage(`${trackIds.length} download${trackIds.length === 1 ? '' : 's'} started.`, false);
+      } catch (error) {
+        showMessage(error.message);
+      }
+    }
+
+    async function deleteTracks(trackIds, prompt = true) {
+      const ids = [...new Set(trackIds.map(String))];
+      if (!ids.length) return;
+      if (prompt && !window.confirm(`Move ${ids.length} track${ids.length === 1 ? '' : 's'} to trash?`)) return;
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/uploads/batch-delete`, {
+          method: 'DELETE',
+          headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ trackIds: ids })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Delete failed.');
+        undoStack.push(ids);
+        redoStack = [];
+        showMessage(`${data.deletedCount || ids.length} track${ids.length === 1 ? '' : 's'} moved to trash. Undo is available.`, false);
+        await loadUploads();
+        updateUndoRedo();
+      } catch (error) {
+        showMessage(error.message);
+      }
+    }
+
+    async function restoreTracks(trackIds) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/uploads/restore`, {
+          method: 'POST',
+          headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ trackIds })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Restore failed.');
+        redoStack.push(trackIds);
+        showMessage(`${data.restoredCount || trackIds.length} track${trackIds.length === 1 ? '' : 's'} restored.`, false);
+        await loadUploads();
+        updateUndoRedo();
+      } catch (error) {
+        showMessage(error.message);
+      }
+    }
+
+    function updateUndoRedo() {
+      undoButton.disabled = undoStack.length === 0;
+      redoButton.disabled = redoStack.length === 0;
+    }
+
+    async function deleteTrack(trackId) {
+      await deleteTracks([trackId]);
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      submitButton.disabled = true;
+      submitButton.textContent = 'Uploading...';
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/uploads/tracks`, { method: 'POST', headers: authHeaders(), body: new FormData(form) });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Upload failed.');
+        form.reset();
+        document.getElementById('isPublic').checked = true;
+        showMessage('Track uploaded and added to the music catalog.', false);
+        await loadUploads();
+      } catch (error) {
+        showMessage(error.message);
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Upload track';
+      }
+    });
+
+    uploadsList.addEventListener('change', updateSelection);
+    uploadsList.addEventListener('click', event => {
+      const button = event.target.closest('[data-delete-track]');
+      if (button) {
+        event.preventDefault();
+        deleteTrack(button.dataset.deleteTrack);
+      }
+    });
+    selectAllButton.addEventListener('click', () => {
+      const shouldSelect = selectedIds().length !== uploads.length;
+      document.querySelectorAll('.upload-checkbox').forEach(input => { input.checked = shouldSelect; });
+      updateSelection();
+    });
+    downloadSelectedButton.addEventListener('click', () => downloadTracks(selectedIds()));
+    downloadAllButton.addEventListener('click', () => downloadTracks(uploads.map(track => track.id)));
+    deleteSelectedButton.addEventListener('click', () => deleteTracks(selectedIds()));
+    deleteAllButton.addEventListener('click', () => deleteTracks(uploads.map(track => track.id)));
+    undoButton.addEventListener('click', async () => {
+      const ids = undoStack.pop();
+      if (ids) await restoreTracks(ids);
+      updateUndoRedo();
+    });
+    redoButton.addEventListener('click', async () => {
+      const ids = redoStack.pop();
+      if (ids) await deleteTracks(ids, false);
+      updateUndoRedo();
+    });
+
+    document.getElementById('backButton').addEventListener('click', () => window.location.replace(`${API_BASE_URL}/music.html`));
+    document.getElementById('signOutButton').addEventListener('click', () => {
+      localStorage.removeItem(tokenKey);
+      localStorage.removeItem('sound-lounge-user');
+      window.location.replace(`${API_BASE_URL}/auth.html`);
+    });
+    loadUploads().catch(error => showMessage(error.message));
+  </script>
+</body>
+</html>

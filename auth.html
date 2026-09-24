@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IKSA Player - Welcome</title>
+  <meta name="description" content="Sign in or create an account to access IKSA Player — your personal music streaming experience.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #e0dff0;
+      --surface: rgba(255,255,255,0.48);
+      --surface-border: rgba(255,255,255,0.55);
+      --surface-shadow: 0 20px 45px rgba(0,0,0,0.14);
+      --surface-inset: inset 0 1px 1px rgba(255,255,255,0.65);
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #64748b;
+      --input-bg: rgba(255,255,255,0.4);
+      --input-border: rgba(255,255,255,0.7);
+      --accent: #7c3aed;
+      --accent-light: #a855f7;
+      --accent-bg: rgba(124,58,237,0.1);
+      --success: #22c55e;
+      --success-bg: rgba(34,197,94,0.12);
+      --error: #ef4444;
+      --error-bg: rgba(239,68,68,0.1);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245,158,11,0.1);
+      --segment-bg: rgba(255,255,255,0.25);
+      --segment-active-bg: rgba(255,255,255,0.92);
+      --segment-active-shadow: 0 5px 14px rgba(15,23,42,0.1);
+      --btn-bg: #0f172a;
+      --btn-text: #ffffff;
+      --btn-hover: #1e293b;
+    }
+
+    body.dark-mode {
+      --bg: #090b18;
+      --surface: rgba(30,33,58,0.82);
+      --surface-border: rgba(148,163,184,0.22);
+      --surface-shadow: 0 20px 45px rgba(0,0,0,0.38);
+      --surface-inset: inset 0 1px 1px rgba(255,255,255,0.08);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --input-bg: rgba(30,41,72,0.58);
+      --input-border: rgba(148,163,184,0.24);
+      --segment-bg: rgba(30,41,72,0.5);
+      --segment-active-bg: rgba(51,65,85,0.9);
+      --segment-active-shadow: 0 5px 14px rgba(0,0,0,0.3);
+      --btn-bg: #e2e8f0;
+      --btn-text: #0f172a;
+      --btn-hover: #cbd5e1;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+      transition: background 400ms ease, color 400ms ease;
+    }
+
+    /* ── Blobs ─────────────────────────────────────────────── */
+    .blob {
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(90px);
+      pointer-events: none;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .blob-1 { width: 380px; height: 380px; background: rgba(124,58,237,0.25); top: -80px; left: -80px; }
+    .blob-2 { width: 380px; height: 380px; background: rgba(236,72,153,0.25); bottom: -96px; right: -64px; animation-delay: -8s; }
+    @keyframes drift { from { transform: translate3d(-1%,-1%,0); } to { transform: translate3d(2%,2%,0) scale(1.04); } }
+
+    /* ── Theme toggle ─────────────────────────────────────── */
+    .theme-toggle {
+      position: fixed; top: 20px; right: 20px; z-index: 20;
+      width: 40px; height: 40px; border-radius: 14px;
+      background: var(--segment-bg); border: 1px solid var(--surface-border);
+      color: var(--text); font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 350ms cubic-bezier(.22,1,.36,1), background 400ms ease;
+    }
+    .theme-toggle:hover { transform: translateY(-1px) rotate(8deg); }
+
+    /* ── Glass card ────────────────────────────────────────── */
+    .glass {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 440px;
+      background: linear-gradient(135deg, var(--surface), rgba(255,255,255,0.18));
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--surface-border);
+      border-radius: 2rem;
+      box-shadow: var(--surface-shadow), var(--surface-inset);
+      padding: 28px 32px;
+      animation: surfaceIn 700ms cubic-bezier(.22,1,.36,1) both;
+    }
+    body.dark-mode .glass {
+      background: linear-gradient(135deg, rgba(30,33,58,0.82), rgba(15,18,38,0.68));
+    }
+    @keyframes surfaceIn { from { opacity:0; transform: translateY(16px) scale(.985); } to { opacity:1; transform: translateY(0) scale(1); } }
+
+    /* ── Logo ──────────────────────────────────────────────── */
+    .logo-wrap { text-align: center; margin-bottom: 24px; }
+    .logo-wrap img {
+      width: 80px; height: 80px; border-radius: 20px;
+      object-fit: cover; border: 1px solid var(--surface-border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    .logo-wrap h1 { font-size: 22px; font-weight: 900; margin-top: 12px; letter-spacing: -0.5px; }
+    .logo-wrap p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── Segmented control ────────────────────────────────── */
+    .auth-segmented {
+      position: relative; isolation: isolate;
+      display: flex; gap: 8px;
+      padding: 4px; border-radius: 16px;
+      background: var(--segment-bg);
+      margin-bottom: 20px;
+    }
+    .segment-indicator {
+      position: absolute; z-index: -1;
+      top: 4px; left: 4px;
+      width: calc(50% - 4px); height: calc(100% - 8px);
+      border-radius: 12px;
+      background: var(--segment-active-bg);
+      box-shadow: var(--segment-active-shadow), inset 0 1px 1px rgba(255,255,255,0.7);
+      transition: transform 520ms cubic-bezier(.22,1,.36,1), width 520ms cubic-bezier(.22,1,.36,1);
+    }
+    .auth-segmented button {
+      position: relative; z-index: 1;
+      flex: 1; border: none; background: none; cursor: pointer;
+      padding: 10px 12px; border-radius: 12px;
+      font-size: 13px; font-weight: 700;
+      color: var(--text-muted);
+      transition: color 380ms ease;
+    }
+    .auth-segmented button.active { color: var(--text); }
+
+    /* ── Views ─────────────────────────────────────────────── */
+    .auth-view { display: none; }
+    .auth-view.active { display: block; animation: viewIn 420ms cubic-bezier(.22,1,.36,1) both; }
+    @keyframes viewIn { from { opacity:.3; transform: translate3d(0,10px,0); } to { opacity:1; transform: translate3d(0,0,0); } }
+
+    /* ── Form elements ────────────────────────────────────── */
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block; margin-bottom: 6px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--text-muted);
+    }
+    .form-group input {
+      width: 100%; border-radius: 16px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      padding: 12px 16px; font-size: 14px;
+      color: var(--text); outline: none;
+      font-family: inherit;
+      transition: transform 350ms cubic-bezier(.22,1,.36,1), box-shadow 350ms ease, border-color 350ms ease;
+    }
+    .form-group input:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(124,58,237,0.12);
+      border-color: var(--accent);
+    }
+    .form-group input::placeholder { color: var(--text-dim); }
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 58px; }
+    .password-toggle {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      border: 0; background: transparent; color: var(--text-muted); font-size: 11px;
+      font-weight: 700; cursor: pointer; padding: 5px;
+    }
+    .password-toggle:hover { color: var(--accent); }
+
+    /* ── Password strength ────────────────────────────────── */
+    .pw-strength { margin-top: 8px; }
+    .pw-strength-bar {
+      height: 4px; border-radius: 4px;
+      background: rgba(148,163,184,0.2);
+      overflow: hidden;
+    }
+    .pw-strength-fill {
+      height: 100%; border-radius: 4px;
+      width: 0; transition: width 400ms ease, background 400ms ease;
+    }
+    .pw-strength-label { font-size: 11px; margin-top: 4px; font-weight: 600; color: var(--text-dim); }
+
+    /* ── OTP input ────────────────────────────────────────── */
+    .otp-container { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
+    .otp-input {
+      width: 48px; height: 56px; text-align: center;
+      font-size: 22px; font-weight: 800;
+      border-radius: 14px;
+      border: 2px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text); outline: none;
+      font-family: 'Inter', monospace;
+      transition: border-color 300ms ease, box-shadow 300ms ease, transform 200ms ease;
+    }
+    .otp-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+      transform: translateY(-2px);
+    }
+    .otp-input.filled { border-color: var(--accent-light); }
+
+    /* ── Buttons ───────────────────────────────────────────── */
+    .btn {
+      width: 100%; padding: 14px;
+      border: none; border-radius: 16px;
+      font-size: 14px; font-weight: 700;
+      cursor: pointer;
+      transition: transform 350ms cubic-bezier(.22,1,.36,1), box-shadow 350ms ease, background 350ms ease, opacity 300ms ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(1px) scale(.98); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-primary { background: var(--btn-bg); color: var(--btn-text); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+    .btn-primary:hover:not(:disabled) { background: var(--btn-hover); }
+    .btn-ghost {
+      background: transparent; color: var(--accent);
+      font-size: 13px; font-weight: 600; padding: 8px;
+    }
+    .btn-ghost:hover { background: var(--accent-bg); }
+
+    /* ── Messages ──────────────────────────────────────────── */
+    .msg {
+      display: none; border-radius: 12px;
+      padding: 10px 14px; font-size: 12px; font-weight: 600;
+      margin-bottom: 14px;
+      animation: viewIn 300ms ease both;
+    }
+    .msg.visible { display: block; }
+    .msg.error { background: var(--error-bg); color: var(--error); }
+    .msg.success { background: var(--success-bg); color: var(--success); }
+    .msg.warning { background: var(--warning-bg); color: var(--warning); }
+
+    /* ── Links ─────────────────────────────────────────────── */
+    .text-link {
+      background: none; border: none; cursor: pointer;
+      font-size: 12px; font-weight: 600;
+      color: var(--accent); text-decoration: none;
+      font-family: inherit;
+      transition: opacity 200ms ease;
+    }
+    .text-link:hover { opacity: 0.75; }
+
+    /* ── Countdown / Resend ────────────────────────────────── */
+    .resend-row {
+      text-align: center; margin-top: 16px;
+      font-size: 12px; color: var(--text-dim);
+    }
+    .resend-row .countdown { font-weight: 700; color: var(--text-muted); }
+
+    /* ── Footer ────────────────────────────────────────────── */
+    .auth-footer { text-align: center; margin-top: 20px; font-size: 11px; color: var(--text-dim); }
+
+    /* ── Step indicators ──────────────────────────────────── */
+    .steps { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 20px; }
+    .step-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(148,163,184,0.3);
+      transition: background 400ms ease, transform 400ms ease;
+    }
+    .step-dot.active { background: var(--accent); transform: scale(1.3); }
+    .step-dot.done { background: var(--success); }
+    .step-line { width: 24px; height: 2px; background: rgba(148,163,184,0.2); border-radius: 1px; }
+
+    /* ── Utilities ─────────────────────────────────────────── */
+    .text-center { text-align: center; }
+    .mb-8 { margin-bottom: 8px; }
+    .mb-16 { margin-bottom: 16px; }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .view-title { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+    .view-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+    .email-highlight { font-weight: 700; color: var(--accent); }
+    .hidden { display: none !important; }
+    .forgot-link-row { text-align: right; margin-top: -6px; margin-bottom: 14px; }
+
+    /* ── Back button ──────────────────────────────────────── */
+    .back-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); font-size: 13px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 0; margin-bottom: 16px;
+      font-family: inherit;
+      transition: color 200ms ease;
+    }
+    .back-btn:hover { color: var(--text); }
+    .back-btn svg { width: 16px; height: 16px; }
+
+    /* ── Spinner ───────────────────────────────────────────── */
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid transparent;
+      border-top-color: currentColor; border-radius: 50%;
+      animation: spin 600ms linear infinite;
+      vertical-align: middle; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+    }
+
+    @media (max-width: 480px) {
+      .glass { padding: 24px 20px; border-radius: 1.5rem; }
+      .otp-input { width: 42px; height: 50px; font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <button id="themeToggle" class="theme-toggle" type="button" aria-label="Enable dark mode" title="Enable dark mode">☾</button>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <main class="glass">
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <img src="./iksa-logo.png" alt="IKSA Player logo">
+      <h1>IKSA Player</h1>
+      <p>Your sound, your space.</p>
+    </div>
+
+    <!-- ═══════════ VIEW: Login / Signup ═══════════ -->
+    <div id="viewAuth" class="auth-view active">
+      <div id="authSegments" class="auth-segmented">
+        <span id="authSegmentIndicator" class="segment-indicator" aria-hidden="true"></span>
+        <button id="loginTab" class="active" type="button">Log in</button>
+        <button id="signupTab" type="button">Create account</button>
+      </div>
+
+      <form id="authForm" novalidate>
+        <div id="nameField" class="form-group hidden">
+          <label for="displayName">Display name</label>
+          <input id="displayName" type="text" placeholder="Your name" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input id="email" type="email" required placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input id="password" type="password" required minlength="8" placeholder="Min. 8 characters" autocomplete="current-password">
+            <button type="button" class="password-toggle" data-password-toggle="password" aria-label="Show password">Show</button>
+          </div>
+        </div>
+        <div id="pwStrength" class="pw-strength hidden">
+          <div class="pw-strength-bar"><div id="pwStrengthFill" class="pw-strength-fill"></div></div>
+          <div id="pwStrengthLabel" class="pw-strength-label"></div>
+        </div>
+        <div id="confirmField" class="form-group hidden">
+          <label for="confirmPassword">Confirm password</label>
+          <div class="password-wrap">
+            <input id="confirmPassword" type="password" minlength="8" placeholder="Re-enter password" autocomplete="new-password">
+            <button type="button" class="password-toggle" data-password-toggle="confirmPassword" aria-label="Show confirm password">Show</button>
+          </div>
+        </div>
+
+        <div id="forgotLinkRow" class="forgot-link-row">
+          <button type="button" class="text-link" id="forgotLink">Forgot password?</button>
+        </div>
+
+        <div id="authMessage" class="msg"></div>
+
+        <button id="submitButton" class="btn btn-primary" type="submit">Log in</button>
+      </form>
+    </div>
+
+    <!-- ═══════════ VIEW: OTP Verification (Signup) ═══════════ -->
+    <div id="viewOTP" class="auth-view">
+      <button type="button" class="back-btn" id="otpBack">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <div class="text-center mb-16">
+        <div style="font-size:40px; margin-bottom:8px;">📧</div>
+        <h2 class="view-title mb-8">Check your email</h2>
+        <p class="view-desc">We sent a 6-digit code to<br><span id="otpEmailDisplay" class="email-highlight"></span></p>
+      </div>
+
+      <form id="otpForm" novalidate>
+        <div class="otp-container" id="otpContainer">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" aria-label="Digit 1">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 2">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 3">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 4">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 5">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 6">
+        </div>
+        <div id="otpMessage" class="msg"></div>
+        <button id="otpSubmit" class="btn btn-primary" type="submit" disabled>Verify email</button>
+      </form>
+
+      <div class="resend-row" id="resendRow">
+        <span id="resendText">Didn't get the code? </span>
+        <button type="button" class="text-link" id="resendBtn" disabled>Resend</button>
+        <span id="resendCountdown" class="countdown"></span>
+      </div>
+    </div>
+
+    <!-- ═══════════ VIEW: Forgot Password — Step 1: Email ═══════════ -->
+    <div id="viewForgot" class="auth-view">
+      <button type="button" class="back-btn" id="forgotBack">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to login
+      </button>
+
+      <div class="steps">
+        <div class="step-dot active" id="fStep1"></div>
+        <div class="step-line"></div>
+        <div class="step-dot" id="fStep2"></div>
+        <div class="step-line"></div>
+        <div class="step-dot" id="fStep3"></div>
+      </div>
+
+      <div class="text-center mb-16">
+        <div style="font-size:40px; margin-bottom:8px;">🔑</div>
+        <h2 class="view-title mb-8">Reset your password</h2>
+        <p class="view-desc">Enter your email and we'll send you a code to reset your password.</p>
+      </div>
+
+      <form id="forgotForm" novalidate>
+        <div class="form-group">
+          <label for="forgotEmail">Email address</label>
+          <input id="forgotEmail" type="email" required placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div id="forgotMessage" class="msg"></div>
+        <button id="forgotSubmit" class="btn btn-primary" type="submit">Send reset code</button>
+      </form>
+    </div>
+
+    <!-- ═══════════ VIEW: Forgot Password — Step 2: OTP ═══════════ -->
+    <div id="viewResetOTP" class="auth-view">
+      <button type="button" class="back-btn" id="resetOTPBack">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+
+      <div class="steps">
+        <div class="step-dot done" id="rStep1"></div>
+        <div class="step-line"></div>
+        <div class="step-dot active" id="rStep2"></div>
+        <div class="step-line"></div>
+        <div class="step-dot" id="rStep3"></div>
+      </div>
+
+      <div class="text-center mb-16">
+        <div style="font-size:40px; margin-bottom:8px;">📧</div>
+        <h2 class="view-title mb-8">Enter reset code</h2>
+        <p class="view-desc">We sent a 6-digit code to<br><span id="resetOTPEmailDisplay" class="email-highlight"></span></p>
+      </div>
+
+      <form id="resetOTPForm" novalidate>
+        <div class="otp-container" id="resetOTPContainer">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 1">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 2">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 3">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 4">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 5">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="Digit 6">
+        </div>
+        <div id="resetOTPMessage" class="msg"></div>
+        <button id="resetOTPSubmit" class="btn btn-primary" type="submit" disabled>Verify code</button>
+      </form>
+
+      <div class="resend-row" id="resetResendRow">
+        <span>Didn't get the code? </span>
+        <button type="button" class="text-link" id="resetResendBtn" disabled>Resend</button>
+        <span id="resetResendCountdown" class="countdown"></span>
+      </div>
+    </div>
+
+    <!-- ═══════════ VIEW: Forgot Password — Step 3: New Password ═══════════ -->
+    <div id="viewNewPassword" class="auth-view">
+      <div class="steps">
+        <div class="step-dot done"></div>
+        <div class="step-line"></div>
+        <div class="step-dot done"></div>
+        <div class="step-line"></div>
+        <div class="step-dot active"></div>
+      </div>
+
+      <div class="text-center mb-16">
+        <div style="font-size:40px; margin-bottom:8px;">🔒</div>
+        <h2 class="view-title mb-8">Set new password</h2>
+        <p class="view-desc">Choose a strong password for your account.</p>
+      </div>
+
+      <form id="newPasswordForm" novalidate>
+        <div class="form-group">
+          <label for="newPassword">New password</label>
+          <input id="newPassword" type="password" required minlength="8" placeholder="Min. 8 characters" autocomplete="new-password">
+        </div>
+        <div id="newPwStrength" class="pw-strength">
+          <div class="pw-strength-bar"><div id="newPwStrengthFill" class="pw-strength-fill"></div></div>
+          <div id="newPwStrengthLabel" class="pw-strength-label"></div>
+        </div>
+        <div class="form-group mt-8">
+          <label for="newPasswordConfirm">Confirm new password</label>
+          <input id="newPasswordConfirm" type="password" required minlength="8" placeholder="Re-enter password" autocomplete="new-password">
+        </div>
+        <div id="newPwMessage" class="msg"></div>
+        <button id="newPwSubmit" class="btn btn-primary" type="submit">Reset password</button>
+      </form>
+    </div>
+
+    <!-- ═══════════ VIEW: Success ═══════════ -->
+    <div id="viewSuccess" class="auth-view">
+      <div class="text-center">
+        <div style="font-size:48px; margin-bottom:12px;">✅</div>
+        <h2 class="view-title mb-8" id="successTitle">Password reset!</h2>
+        <p class="view-desc mb-16" id="successDesc">Your password has been updated. You can now log in with your new password.</p>
+        <button type="button" class="btn btn-primary" id="successBtn">Back to login</button>
+      </div>
+    </div>
+
+    <p class="auth-footer">By continuing, you agree to use IKSA Player responsibly.</p>
+  </main>
+
+  <script>
+    // ── Config ──────────────────────────────────────────────────────────────────
+    const API = window.location.origin === 'null' ? 'http://localhost:3000' : window.location.origin;
+    const TOKEN_KEY = 'sound-lounge-auth-token';
+    const USER_KEY = 'sound-lounge-user';
+    const THEME_KEY = 'iksa-player-theme';
+
+    // ── DOM refs ────────────────────────────────────────────────────────────────
+    const $ = (s) => document.getElementById(s);
+    const themeToggle = $('themeToggle');
+
+    // Auth view
+    const viewAuth = $('viewAuth');
+    const loginTab = $('loginTab');
+    const signupTab = $('signupTab');
+    const authSegments = $('authSegments');
+    const authSegmentIndicator = $('authSegmentIndicator');
+    const authForm = $('authForm');
+    const nameField = $('nameField');
+    const confirmField = $('confirmField');
+    const displayName = $('displayName');
+    const emailInput = $('email');
+    const passwordInput = $('password');
+    const confirmPassword = $('confirmPassword');
+    const submitButton = $('submitButton');
+    const authMessage = $('authMessage');
+    const forgotLink = $('forgotLink');
+    const forgotLinkRow = $('forgotLinkRow');
+    const pwStrength = $('pwStrength');
+    const pwStrengthFill = $('pwStrengthFill');
+    const pwStrengthLabel = $('pwStrengthLabel');
+
+    document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const input = $(button.dataset.passwordToggle);
+        const visible = input.type === 'text';
+        input.type = visible ? 'password' : 'text';
+        button.textContent = visible ? 'Show' : 'Hide';
+        button.setAttribute('aria-label', `${visible ? 'Show' : 'Hide'} ${input.id === 'password' ? 'password' : 'confirm password'}`);
+      });
+    });
+
+    // OTP view (signup)
+    const viewOTP = $('viewOTP');
+    const otpContainer = $('otpContainer');
+    const otpInputs = otpContainer.querySelectorAll('.otp-input');
+    const otpForm = $('otpForm');
+    const otpSubmit = $('otpSubmit');
+    const otpMessage = $('otpMessage');
+    const otpEmailDisplay = $('otpEmailDisplay');
+    const otpBack = $('otpBack');
+    const resendBtn = $('resendBtn');
+    const resendCountdown = $('resendCountdown');
+
+    // Forgot password views
+    const viewForgot = $('viewForgot');
+    const forgotForm = $('forgotForm');
+    const forgotEmail = $('forgotEmail');
+    const forgotMessage = $('forgotMessage');
+    const forgotSubmit = $('forgotSubmit');
+    const forgotBack = $('forgotBack');
+
+    const viewResetOTP = $('viewResetOTP');
+    const resetOTPContainer = $('resetOTPContainer');
+    const resetOTPInputs = resetOTPContainer.querySelectorAll('.otp-input');
+    const resetOTPForm = $('resetOTPForm');
+    const resetOTPSubmit = $('resetOTPSubmit');
+    const resetOTPMessage = $('resetOTPMessage');
+    const resetOTPEmailDisplay = $('resetOTPEmailDisplay');
+    const resetOTPBack = $('resetOTPBack');
+    const resetResendBtn = $('resetResendBtn');
+    const resetResendCountdown = $('resetResendCountdown');
+
+    const viewNewPassword = $('viewNewPassword');
+    const newPasswordForm = $('newPasswordForm');
+    const newPasswordInput = $('newPassword');
+    const newPasswordConfirm = $('newPasswordConfirm');
+    const newPwMessage = $('newPwMessage');
+    const newPwSubmit = $('newPwSubmit');
+    const newPwStrengthFill = $('newPwStrengthFill');
+    const newPwStrengthLabel = $('newPwStrengthLabel');
+
+    const viewSuccess = $('viewSuccess');
+    const successBtn = $('successBtn');
+
+    // ── State ───────────────────────────────────────────────────────────────────
+    let mode = 'login'; // 'login' | 'signup'
+    let pendingEmail = '';
+    let resetToken = '';
+
+    // ── Theme ───────────────────────────────────────────────────────────────────
+    function applyTheme(theme) {
+      const dark = theme === 'dark';
+      document.body.classList.toggle('dark-mode', dark);
+      themeToggle.textContent = dark ? '☀' : '☾';
+      themeToggle.setAttribute('aria-label', dark ? 'Enable light mode' : 'Enable dark mode');
+    }
+    applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+    themeToggle.addEventListener('click', () => {
+      const next = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+      localStorage.setItem(THEME_KEY, next);
+      applyTheme(next);
+    });
+
+    // ── View switching ──────────────────────────────────────────────────────────
+    const views = [viewAuth, viewOTP, viewForgot, viewResetOTP, viewNewPassword, viewSuccess];
+    function showView(view) {
+      views.forEach(v => v.classList.remove('active'));
+      view.classList.add('active');
+    }
+
+    // ── Segment indicator ───────────────────────────────────────────────────────
+    function updateIndicator() {
+      const activeTab = mode === 'signup' ? signupTab : loginTab;
+      const containerRect = authSegments.getBoundingClientRect();
+      const tabRect = activeTab.getBoundingClientRect();
+      authSegmentIndicator.style.width = `${tabRect.width}px`;
+      authSegmentIndicator.style.transform = `translateX(${tabRect.left - containerRect.left}px)`;
+    }
+
+    // ── Mode switching ──────────────────────────────────────────────────────────
+    function setMode(next) {
+      mode = next;
+      const signup = mode === 'signup';
+      nameField.classList.toggle('hidden', !signup);
+      confirmField.classList.toggle('hidden', !signup);
+      pwStrength.classList.toggle('hidden', !signup);
+      forgotLinkRow.classList.toggle('hidden', signup);
+      displayName.required = signup;
+      confirmPassword.required = signup;
+      passwordInput.autocomplete = signup ? 'new-password' : 'current-password';
+      passwordInput.placeholder = signup ? 'Uppercase, lowercase, number' : 'Enter your password';
+      submitButton.textContent = signup ? 'Create account' : 'Log in';
+      loginTab.classList.toggle('active', !signup);
+      signupTab.classList.toggle('active', signup);
+      updateIndicator();
+      hideMsg(authMessage);
+    }
+
+    loginTab.addEventListener('click', () => setMode('login'));
+    signupTab.addEventListener('click', () => setMode('signup'));
+    window.addEventListener('resize', updateIndicator);
+    updateIndicator();
+
+    // ── Message helpers ─────────────────────────────────────────────────────────
+    function showMsg(el, text, type = 'error') {
+      el.textContent = text;
+      el.className = `msg visible ${type}`;
+    }
+    function hideMsg(el) {
+      el.className = 'msg';
+      el.textContent = '';
+    }
+
+    // ── Password strength meter ─────────────────────────────────────────────────
+    function calcStrength(pw) {
+      let score = 0;
+      if (pw.length >= 8) score++;
+      if (pw.length >= 12) score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[a-z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      return Math.min(score, 5);
+    }
+
+    function updateStrengthMeter(pw, fillEl, labelEl) {
+      const score = calcStrength(pw);
+      const levels = [
+        { width: '0%', color: 'transparent', label: '' },
+        { width: '20%', color: '#ef4444', label: 'Very weak' },
+        { width: '40%', color: '#f59e0b', label: 'Weak' },
+        { width: '60%', color: '#eab308', label: 'Fair' },
+        { width: '80%', color: '#22c55e', label: 'Strong' },
+        { width: '100%', color: '#16a34a', label: 'Very strong' }
+      ];
+      const l = levels[score];
+      fillEl.style.width = l.width;
+      fillEl.style.background = l.color;
+      labelEl.textContent = l.label;
+      labelEl.style.color = l.color;
+    }
+
+    passwordInput.addEventListener('input', () => {
+      if (mode === 'signup') updateStrengthMeter(passwordInput.value, pwStrengthFill, pwStrengthLabel);
+    });
+    newPasswordInput.addEventListener('input', () => {
+      updateStrengthMeter(newPasswordInput.value, newPwStrengthFill, newPwStrengthLabel);
+    });
+
+    // ── API helper ──────────────────────────────────────────────────────────────
+    async function api(path, body, method = 'POST') {
+      const res = await fetch(`${API}${path}`, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Request failed.');
+      return data;
+    }
+
+    // ── OTP input logic (reusable) ──────────────────────────────────────────────
+    function setupOTPInputs(inputs, submitBtn) {
+      inputs.forEach((inp, i) => {
+        inp.addEventListener('input', (e) => {
+          const val = e.target.value.replace(/\D/g, '');
+          e.target.value = val;
+          if (val) {
+            e.target.classList.add('filled');
+            if (i < inputs.length - 1) inputs[i + 1].focus();
+          } else {
+            e.target.classList.remove('filled');
+          }
+          submitBtn.disabled = !getOTPCode(inputs);
+        });
+        inp.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !e.target.value && i > 0) {
+            inputs[i - 1].focus();
+            inputs[i - 1].value = '';
+            inputs[i - 1].classList.remove('filled');
+          }
+        });
+        inp.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const pasted = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6);
+          pasted.split('').forEach((ch, j) => {
+            if (inputs[j]) { inputs[j].value = ch; inputs[j].classList.add('filled'); }
+          });
+          if (pasted.length === 6) inputs[5].focus();
+          submitBtn.disabled = pasted.length !== 6;
+        });
+      });
+    }
+
+    function getOTPCode(inputs) {
+      const code = Array.from(inputs).map(i => i.value).join('');
+      return code.length === 6 ? code : null;
+    }
+
+    function clearOTPInputs(inputs) {
+      inputs.forEach(i => { i.value = ''; i.classList.remove('filled'); });
+    }
+
+    setupOTPInputs(otpInputs, otpSubmit);
+    setupOTPInputs(resetOTPInputs, resetOTPSubmit);
+
+    // ── Resend cooldown timer ───────────────────────────────────────────────────
+    function startResendCooldown(btn, countdownEl, seconds = 60) {
+      btn.disabled = true;
+      let remaining = seconds;
+      countdownEl.textContent = ` (${remaining}s)`;
+      const interval = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(interval);
+          countdownEl.textContent = '';
+          btn.disabled = false;
+        } else {
+          countdownEl.textContent = ` (${remaining}s)`;
+        }
+      }, 1000);
+    }
+
+    // ── Auth form submit ────────────────────────────────────────────────────────
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!authForm.reportValidity()) return;
+
+      if (mode === 'signup' && passwordInput.value !== confirmPassword.value) {
+        showMsg(authMessage, 'Passwords do not match.');
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.innerHTML = `<span class="spinner"></span>${mode === 'signup' ? 'Creating account...' : 'Signing in...'}`;
+      hideMsg(authMessage);
+
+      try {
+        if (mode === 'signup') {
+          const data = await api('/api/auth/register', {
+            email: emailInput.value.trim(),
+            password: passwordInput.value,
+            displayName: displayName.value.trim()
+          });
+
+          if (data.requiresVerification) {
+            pendingEmail = data.email;
+            otpEmailDisplay.textContent = data.email;
+            clearOTPInputs(otpInputs);
+            showView(viewOTP);
+            otpInputs[0].focus();
+            startResendCooldown(resendBtn, resendCountdown);
+            return;
+          }
+        } else {
+          const data = await api('/api/auth/login', {
+            email: emailInput.value.trim(),
+            password: passwordInput.value
+          });
+
+          if (data.requiresVerification) {
+            pendingEmail = data.email;
+            otpEmailDisplay.textContent = data.email;
+            clearOTPInputs(otpInputs);
+            showView(viewOTP);
+            otpInputs[0].focus();
+            startResendCooldown(resendBtn, resendCountdown);
+            return;
+          }
+
+          localStorage.setItem(TOKEN_KEY, data.token);
+          localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+          const returnTo = new URLSearchParams(window.location.search).get('returnTo') || '/music.html';
+          window.location.replace(`${API}${returnTo.startsWith('/') ? returnTo : '/music.html'}`);
+          return;
+        }
+      } catch (err) {
+        // If unverified email on login, redirect to OTP view
+        if (err.message.includes('verify your email')) {
+          try {
+            pendingEmail = emailInput.value.trim();
+            otpEmailDisplay.textContent = pendingEmail;
+            await api('/api/auth/resend-otp', { email: pendingEmail, purpose: 'email_verify' });
+            clearOTPInputs(otpInputs);
+            showView(viewOTP);
+            otpInputs[0].focus();
+            startResendCooldown(resendBtn, resendCountdown);
+          } catch (e2) {
+            showMsg(authMessage, e2.message);
+          }
+          return;
+        }
+        showMsg(authMessage, err.message);
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = mode === 'signup' ? 'Create account' : 'Log in';
+      }
+    });
+
+    // ── OTP verification submit ─────────────────────────────────────────────────
+    otpForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = getOTPCode(otpInputs);
+      if (!code) return;
+
+      otpSubmit.disabled = true;
+      otpSubmit.innerHTML = '<span class="spinner"></span>Verifying...';
+      hideMsg(otpMessage);
+
+      try {
+        const data = await api('/api/auth/verify-otp', { email: pendingEmail, code });
+        localStorage.setItem(TOKEN_KEY, data.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+        window.location.replace(`${API}/music.html`);
+      } catch (err) {
+        showMsg(otpMessage, err.message);
+        clearOTPInputs(otpInputs);
+        otpInputs[0].focus();
+      } finally {
+        otpSubmit.disabled = false;
+        otpSubmit.textContent = 'Verify email';
+      }
+    });
+
+    // OTP back / resend
+    otpBack.addEventListener('click', () => { showView(viewAuth); hideMsg(otpMessage); });
+    resendBtn.addEventListener('click', async () => {
+      try {
+        await api('/api/auth/resend-otp', { email: pendingEmail, purpose: 'email_verify' });
+        showMsg(otpMessage, 'New code sent!', 'success');
+        clearOTPInputs(otpInputs);
+        startResendCooldown(resendBtn, resendCountdown);
+      } catch (err) {
+        showMsg(otpMessage, err.message);
+      }
+    });
+
+    // ── Forgot Password — Step 1 ────────────────────────────────────────────────
+    forgotLink.addEventListener('click', () => { showView(viewForgot); hideMsg(forgotMessage); });
+    forgotBack.addEventListener('click', () => { showView(viewAuth); });
+
+    forgotForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!forgotForm.reportValidity()) return;
+
+      forgotSubmit.disabled = true;
+      forgotSubmit.innerHTML = '<span class="spinner"></span>Sending...';
+      hideMsg(forgotMessage);
+
+      try {
+        await api('/api/auth/forgot-password', { email: forgotEmail.value.trim() });
+        pendingEmail = forgotEmail.value.trim();
+        resetOTPEmailDisplay.textContent = pendingEmail;
+        clearOTPInputs(resetOTPInputs);
+        showView(viewResetOTP);
+        resetOTPInputs[0].focus();
+        startResendCooldown(resetResendBtn, resetResendCountdown);
+      } catch (err) {
+        showMsg(forgotMessage, err.message);
+      } finally {
+        forgotSubmit.disabled = false;
+        forgotSubmit.textContent = 'Send reset code';
+      }
+    });
+
+    // ── Forgot Password — Step 2: Verify Reset OTP ──────────────────────────────
+    resetOTPBack.addEventListener('click', () => { showView(viewForgot); hideMsg(resetOTPMessage); });
+
+    resetOTPForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = getOTPCode(resetOTPInputs);
+      if (!code) return;
+
+      resetOTPSubmit.disabled = true;
+      resetOTPSubmit.innerHTML = '<span class="spinner"></span>Verifying...';
+      hideMsg(resetOTPMessage);
+
+      try {
+        const data = await api('/api/auth/verify-reset-otp', { email: pendingEmail, code });
+        resetToken = data.resetToken;
+        showView(viewNewPassword);
+        newPasswordInput.focus();
+      } catch (err) {
+        showMsg(resetOTPMessage, err.message);
+        clearOTPInputs(resetOTPInputs);
+        resetOTPInputs[0].focus();
+      } finally {
+        resetOTPSubmit.disabled = false;
+        resetOTPSubmit.textContent = 'Verify code';
+      }
+    });
+
+    resetResendBtn.addEventListener('click', async () => {
+      try {
+        await api('/api/auth/forgot-password', { email: pendingEmail });
+        showMsg(resetOTPMessage, 'New code sent!', 'success');
+        clearOTPInputs(resetOTPInputs);
+        startResendCooldown(resetResendBtn, resetResendCountdown);
+      } catch (err) {
+        showMsg(resetOTPMessage, err.message);
+      }
+    });
+
+    // ── Forgot Password — Step 3: New Password ─────────────────────────────────
+    newPasswordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!newPasswordForm.reportValidity()) return;
+
+      if (newPasswordInput.value !== newPasswordConfirm.value) {
+        showMsg(newPwMessage, 'Passwords do not match.');
+        return;
+      }
+
+      newPwSubmit.disabled = true;
+      newPwSubmit.innerHTML = '<span class="spinner"></span>Resetting...';
+      hideMsg(newPwMessage);
+
+      try {
+        await api('/api/auth/reset-password', { resetToken, newPassword: newPasswordInput.value });
+        showView(viewSuccess);
+      } catch (err) {
+        showMsg(newPwMessage, err.message);
+      } finally {
+        newPwSubmit.disabled = false;
+        newPwSubmit.textContent = 'Reset password';
+      }
+    });
+
+    // ── Success view ────────────────────────────────────────────────────────────
+    successBtn.addEventListener('click', () => {
+      showView(viewAuth);
+      setMode('login');
+    });
+
+    // ── Auto-redirect if already logged in ──────────────────────────────────────
+    if (localStorage.getItem(TOKEN_KEY)) {
+      window.location.replace(`${API}/music.html`);
+    }
+  </script>
+</body>
+</html>

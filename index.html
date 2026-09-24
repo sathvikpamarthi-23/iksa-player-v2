@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IKSA Player - Liquid Glass</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            background-color: #05060a;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Ambient Glowing Background Orbs to highlight glass refraction */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.55;
+            pointer-events: none;
+            animation: orbFloat 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -40px) scale(1.15); }
+            100% { transform: translate(-20px, 30px) scale(0.95); }
+        }
+
+        /* LIQUID GLASS BUTTON CONTAINER */
+        .liquid-glass-wrapper {
+            position: relative;
+            padding: 3px;
+            border-radius: 9999px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(168,85,247,0.7), rgba(6,182,212,0.7), rgba(255,255,255,0.3));
+            background-size: 300% 300%;
+            animation: fluidBorder 6s ease infinite;
+            box-shadow: 
+                0 0 35px -5px rgba(168, 85, 247, 0.45),
+                0 0 20px 0px rgba(6, 182, 212, 0.35);
+        }
+
+        @keyframes fluidBorder {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* LIQUID GLASS BUTTON CORE */
+        .liquid-glass-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.85rem;
+            padding: 1.25rem 3rem;
+            border-radius: 9999px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: 0.03em;
+            color: #ffffff;
+            cursor: pointer;
+            overflow: hidden;
+            isolation: isolate;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(28px) saturate(220%);
+            -webkit-backdrop-filter: blur(28px) saturate(220%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            /* Multi-layer Specular Optical Refraction Shadows */
+            box-shadow: 
+                inset 0 2.5px 5px 0 rgba(255, 255, 255, 0.85),
+                inset 0 -3px 8px 0 rgba(0, 0, 0, 0.55),
+                inset 0 0 30px 2px rgba(255, 255, 255, 0.2),
+                0 20px 40px -10px rgba(0, 0, 0, 0.7);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            filter: url(#liquid-refraction);
+        }
+
+        /* Interactive Light Refraction Spotlight Follower */
+        .liquid-glass-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            background: radial-gradient(
+                circle 140px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(255, 255, 255, 0.55) 0%,
+                rgba(168, 85, 247, 0.3) 45%,
+                transparent 80%
+            );
+            opacity: 0.85;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Glossy Specular Light Sweep Effect */
+        .liquid-glass-btn::after {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: -60%;
+            width: 220%;
+            height: 220%;
+            background: linear-gradient(
+                45deg,
+                transparent 45%,
+                rgba(255, 255, 255, 0.45) 50%,
+                transparent 55%
+            );
+            transform: rotate(30deg) translateY(-100%);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .liquid-glass-btn:hover::after {
+            transform: rotate(30deg) translateY(100%);
+        }
+
+        .liquid-glass-btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.75);
+            box-shadow: 
+                inset 0 3px 8px 0 rgba(255, 255, 255, 0.95),
+                inset 0 -3px 10px 0 rgba(0, 0, 0, 0.7),
+                inset 0 0 40px 5px rgba(168, 85, 247, 0.4),
+                0 30px 50px -10px rgba(168, 85, 247, 0.6),
+                0 0 30px rgba(6, 182, 212, 0.5);
+        }
+
+        .liquid-glass-btn:active {
+            transform: scale(0.96) translateY(2px);
+            box-shadow: 
+                inset 0 1px 2px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 3px 0 rgba(0, 0, 0, 0.8),
+                inset 0 0 20px 0 rgba(0, 0, 0, 0.6);
+        }
+
+        /* Liquid Click Ripple */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: rippleAnim 0.6s linear;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex items-center justify-center relative">
+
+    <!-- SVG Liquid Glass Refraction Filter -->
+    <svg class="hidden" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <filter id="liquid-refraction" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="3" result="noise" id="turbulence-node" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Background Orbs for Glass Refraction Visibility -->
+    <div class="ambient-orb w-[450px] h-[450px] bg-purple-600 top-[20%] left-[25%]"></div>
+    <div class="ambient-orb w-[500px] h-[500px] bg-cyan-500 bottom-[20%] right-[25%]" style="animation-delay: -3s;"></div>
+    <div class="ambient-orb w-[350px] h-[350px] bg-pink-600 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2" style="animation-delay: -6s;"></div>
+
+    <!-- Centered Standalone Liquid Glass Button -->
+    <main class="relative z-10">
+        <div class="liquid-glass-wrapper">
+            <button id="go-to-iksa-btn" class="liquid-glass-btn group" aria-label="Go to IKSA Player">
+                <span class="relative z-10 flex items-center gap-3">
+                    <i data-lucide="play-circle" class="w-7 h-7 text-cyan-300 fill-cyan-400/20 group-hover:scale-110 transition-transform"></i>
+                    <span>Go to IKSA Player</span>
+                    <i data-lucide="arrow-right" class="w-6 h-6 text-purple-300 group-hover:translate-x-2 transition-transform"></i>
+                </span>
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        const btn = document.getElementById('go-to-iksa-btn');
+        const turbulenceNode = document.getElementById('turbulence-node');
+
+        // Dynamic Interactive Light & Liquid Distortion Follower
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Update mouse coordinates for CSS radial spotlight
+            btn.style.setProperty('--mouse-x', `${x}px`);
+            btn.style.setProperty('--mouse-y', `${y}px`);
+
+            // Dynamically alter turbulence frequency based on cursor velocity
+            if (turbulenceNode) {
+                const freqX = 0.015 + (x / rect.width) * 0.01;
+                const freqY = 0.015 + (y / rect.height) * 0.01;
+                turbulenceNode.setAttribute('baseFrequency', `${freqX} ${freqY}`);
+            }
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            if (turbulenceNode) {
+                turbulenceNode.setAttribute('baseFrequency', '0.015 0.015');
+            }
+        });
+
+        // Click Ripple & Redirection to auth.html
+        btn.addEventListener('click', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const circle = document.createElement('span');
+            const diameter = Math.max(rect.width, rect.height);
+            const radius = diameter / 2;
+
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${e.clientX - rect.left - radius}px`;
+            circle.style.top = `${e.clientY - rect.top - radius}px`;
+            circle.classList.add('ripple');
+
+            const ripple = btn.getElementsByClassName('ripple')[0];
+            if (ripple) {
+                ripple.remove();
+            }
+
+            btn.appendChild(circle);
+
+            // Redirect to auth.html
+            setTimeout(() => {
+                window.location.href = 'auth.html';
+            }, 300);
+        });
+    </script>
+</body>
+</html>
